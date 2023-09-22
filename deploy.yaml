@@ -1,0 +1,52 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+    config.vm.define "lab-vm"
+    config.vm.box = "geerlingguy/debian11"
+    config.vm.hostname = "lab-vm"
+    config.ssh.insert_key = true
+
+    # Virtualbox config
+    config.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.cpus = 2
+      v.customize ["modifyvm", :id, "--nictype1", "virtio"]
+    end
+
+    # Network config
+    config.vm.network :private_network, ip: "192.168.56.3"
+
+    # for slow laptops
+    config.vm.boot_timeout = 600
+
+    # Sync Folder config
+    # config.vm.synced_folder "./test-folder", "/home/vagrant/myFolder", owner: "vagrant", group: "vagrant"
+
+    # Creating a box_owner file to post the report to slack
+    # config.vm.provision "shell", privileged: false, inline: "echo "+`whoami`.chomp+"@"+`hostname`.chomp+" > /home/vagrant/box_owner"
+
+    # Executing a shell script
+    # config.vm.provision "shell", privileged: true, path: "script.sh"
+
+    # VM Provision config
+    # config.vm.provision "file", source: "./test-folder", destination: "/home/vagrant/test-folder"
+
+    # config.vm.provision "ansible_local" do |ansible|
+    #     ansible.provisioning_path = "/home/vagrant/ansible"
+    #     ansible.playbook = "playbooks/myplaybook.yml"
+    #     ansible.extra_vars = { vhosts: ENV['VHOSTS'] }
+    #     ansible.raw_arguments = ""
+    #     # Verbosity levels true = -v, -vv and -vvv act as normal
+    #     ansible.verbose = ""
+    #     ansible.install = "true"
+    #     ansible.install_mode = "pip"
+    #     ansible.pip_args = "-r /vagrant/requirements.txt"
+    #     ansible.version = '2.9.2'
+    #     ansible.groups = {
+    #       "local" => [
+    #         "lab-vm"
+    #       ]
+    #     }
+    # end
+end
